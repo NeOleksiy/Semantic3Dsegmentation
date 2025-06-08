@@ -1,0 +1,42 @@
+# Общие параметры
+output:
+  checkpoint_dir: "outputs/checkpoints"
+  inference_dir: "outputs/predictions"
+  saved_model: "outputs/saved_model"
+  log_dir: "outputs/logs"
+
+# Данные
+data:
+  name: "ScanNet"
+  root: "../scans"
+  train_size: 0.9
+  target_size: 10000
+  sample_type: "sample"
+  rgb_flag: False
+  normal_flag: False
+  density_flag: False
+  density_radius: 0.1
+  curvature_flag: False
+
+dataloader:
+  num_workers: 10
+  train:
+    batch_size: 8
+  valid:
+    batch_size: 2
+
+# Модель
+model:
+  name: "PointNet"
+  num_classes: 20
+  dropout: 0.5
+
+# Обучение
+training:
+  epochs: 100
+  lr: 0.001
+  weight_decay: 0.0004
+
+inference:
+  input_path: "examples/scene.ply"
+  checkpoint_path: "outputs/checkpoints/best_model.pth"
