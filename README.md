@@ -1,6 +1,6 @@
 # 3D Semantic Segmentation Toolkit
 
-![3D Segmentation Example](sem_3d_seg/static/seg_screan.png)  
+![3D Segmentation Example](static/seg_screan.png)  
 *Semantic segmentation example on ScanNet scene*
 
 ## Project Overview
@@ -25,6 +25,7 @@ pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 -f https://download.pyt
 # Dataset Setup
 1.Download sample ScanNet from kaggle https://www.kaggle.com/datasets/dngminhli/scannet
 2.Organize data with this structure:
+```
 datasets/
 └── scannet/
     ├── scenes0000_00/
@@ -42,7 +43,7 @@ datasets/
     |   |── scene0000_01.aggregation.json
     |   |──────
     ...
-
+```
 
 # Training
 ```python
@@ -61,7 +62,7 @@ streamlit run streamlit_app.py
 ```
 
 # Repository Structure
-
+```
 3d-seg-repo/
 ├── configs/             # configuration
 ├── data/                # Data modules(dataset, augmentation)
@@ -72,7 +73,7 @@ streamlit run streamlit_app.py
 ├── train.py             # Main training script
 ├── streamlit_app.py     # streamlit_app
 ├── requirements.txt     # Python dependencies
-
+```
 ## Supported Models
 
 | Model            | Support Extra Features<br>(RGB, Normals) | mIoU<br>(ScanNet sample) |
