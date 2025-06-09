@@ -83,7 +83,7 @@ streamlit run streamlit_app.py
 | VoxelNet         | ❌                                       | 19.2%                    |
 | VoxelNet+        | ✅                                       | 20.7%                    |
 | DGCNN            | ✅                                       | 30.1%                    |
-| PVCNN            | ✅                                       | 46.1%                    |
+| PVCNN            | ✅                                       | 48.1%                    |
 
 ### PVCNN:
 
