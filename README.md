@@ -1,29 +1,24 @@
 # 3D Semantic Segmentation Toolkit
 
-![3D Segmentation Example](static/seg_screan.png)  
+![3D Segmentation Example](sem_3d_seg/static/seg_screan.png)  
 *Semantic segmentation example on ScanNet scene*
 
 ## Project Overview
 
 This repository provides a comprehensive framework for training and deploying 3D semantic segmentation models. The implementation supports various neural architectures for ScanNet dataset with different data representational.
 
-## Installation
 
 ### Dependencies
 ```bash
 # Python 3.8+
-conda create -n 3dseg python=3.8
-conda activate 3dseg
+make setup
 
-# Install core dependencies
-pip install -r requirements.txt
-
-# Install PyTorch (select version matching your CUDA)
-pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
 # Dataset Setup
-1.Download sample ScanNet from kaggle https://www.kaggle.com/datasets/dngminhli/scannet
+1.`
+make data-download
+`
 2.Organize data with this structure:
 ```
 datasets/
@@ -42,54 +37,65 @@ datasets/
     |   |── scene0000_01.txt
     |   |── scene0000_01.aggregation.json
     |   |──────
-    ...
-```
+...
+
+
 
 # Training
 ```python
-python train.py 
+make train 
 ```
 # Inference
 ```python
-python inference.py \
-    inference.input_path=examples/scene.ply \
-    model=pointtransformer \
-    inference.checkpoint_path=checkpoints/best_model.pth
+make infer input_path=scene0022_01_vh_clean_2.ply \ #need fill inference.yaml
+                        output_path=results/segmented.ply
 ```
 # StreamLit visualization
 ```python
-streamlit run streamlit_app.py
+make streamlit_app.py #need fill sl_app.yaml
+```
+
+# Docker
+```bash
+make docker-build
+make docker-run-train # for train
+make docker-run-infer input_path=scene0022_01_vh_clean_2.ply output_path=/workspace/results/segmented.ply # for inference
 ```
 
 # Repository Structure
-```
+
 3d-seg-repo/
 ├── configs/             # configuration
 ├── data/                # Data modules(dataset, augmentation)
 ├── models/              # Model implementations
 ├── utils/               # utils(and losses)
 ├── evaluation/          # Evaluation metrics
+├── losses/              # Losses class 
+├── docker/              # Docker container
+├── static/              # static file
 ├── inference.py         # Inference script
 ├── train.py             # Main training script
-├── streamlit_app.py     # streamlit_app
+├── s2app.py             # streamlit_app
 ├── requirements.txt     # Python dependencies
-```
+├── Makefile
+
 ## Supported Models
 
-| Model            | Support Extra Features<br>(RGB, Normals) | mIoU<br>(ScanNet sample) |
-|------------------|------------------------------------------|--------------------------|
-| PointNet         | ❌                                       | 21.6%                    |
-| PointNet++       | ✅                                       | 39.4%                    |
-| VoxelNet         | ❌                                       | 19.2%                    |
-| VoxelNet+        | ✅                                       | 20.7%                    |
-| DGCNN            | ✅                                       | 30.1%                    |
-| PVCNN            | ✅                                       | 48.1%                    |
+| Model            | Support Extra Features<br>(RGB, Normals) | mIoU<br>(ScanNet sample) | mIoU<br>(KITTI360 )     |
+|------------------|------------------------------------------|--------------------------|--------------------------|
+| PointNet         | ❌                                       | 21.6%                    | -                        |
+| PointNet++       | ✅                                       | 39.4%                    | 18.6%                    |
+| VoxelNet         | ❌                                       | 19.2%                    | -                        |
+| VoxelNet+        | ✅                                       | 20.7%                    | 8.2%                     |
+| DGCNN            | ✅                                       | 30.1%                    | 21.6%                    |
+| PVCNN            | ✅                                       | 46.1%                    | 21.6%                    |
 
 ### PVCNN:
-
+```
 @inproceedings{liu2019pvcnn,
   title={Point-Voxel CNN for Efficient 3D Deep Learning},
   author={Liu, Zhijian and Tang, Haotian and Lin, Yujun and Han, Song},
   booktitle={NeurIPS},
   year={2019}
 }
+```

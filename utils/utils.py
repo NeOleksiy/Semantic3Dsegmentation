@@ -5,55 +5,8 @@ import open3d as o3d
 import torch
 from tqdm import tqdm
 
-CLASS_LABELS = (
-    "wall",
-    "floor",
-    "cabinet",
-    "bed",
-    "chair",
-    "sofa",
-    "table",
-    "door",
-    "window",
-    "bookshelf",
-    "picture",
-    "counter",
-    "desk",
-    "curtain",
-    "refrigerator",
-    "shower curtain",
-    "toilet",
-    "sink",
-    "bathtub",
-    "otherfurniture",
-)
 
-SCANNET_COLOR_MAP = {
-    0: (0, 0, 0),  # unlabeled
-    1: (174, 199, 232),  # wall
-    2: (152, 223, 138),  # floor
-    3: (31, 119, 180),  # cabinet
-    4: (255, 187, 120),  # bed
-    5: (188, 189, 34),  # chair
-    6: (140, 86, 75),  # sofa
-    7: (255, 152, 150),  # table
-    8: (214, 39, 40),  # door
-    9: (197, 176, 213),  # window
-    10: (148, 103, 189),  # bookshelf
-    11: (196, 156, 148),  # picture
-    12: (23, 190, 207),  # counter
-    14: (247, 182, 210),  # desk
-    16: (219, 219, 141),  # curtain
-    24: (255, 127, 14),  # refrigerator
-    28: (158, 218, 229),  # shower curtain
-    33: (44, 160, 44),  # toilet
-    34: (112, 128, 144),  # sink
-    36: (227, 119, 194),  # bathtub
-    39: (82, 84, 163),  # otherfurn
-}
-
-
-def precompute_scannet_normals(root_dir, overwrite=False):
+def compute_normals(root_dir, overwrite=False):
     scenes = [
         d for d in os.listdir(root_dir) if os.path.isdir(os.path.join(root_dir, d))
     ]
@@ -96,6 +49,44 @@ def optimized_fps(points, k):
         indices[i] = torch.argmax(distances)
 
     return indices.numpy()
+
+
+def compute_density(coords):
+    tree = KDTree(coords)
+    densities = np.array(
+        [len(tree.query_radius([pt], r=self.density_radius)[0]) for pt in coords]
+    )
+    return densities.reshape(-1, 1)
+
+
+def compute_curvature(coords, k=30):
+    tree = NearestNeighbors(n_neighbors=k, algorithm="kd_tree").fit(coords)
+    curvatures = []
+    for pt in coords:
+        _, indices = tree.kneighbors([pt])
+        neighbors = coords[indices[0]]
+        cov = np.cov(neighbors.T)
+        eigenvalues = np.linalg.eigvalsh(cov)
+        curvature = eigenvalues[0] / (eigenvalues.sum() + 1e-8)
+        curvatures.append(curvature)
+    return np.array(curvatures).reshape(-1, 1)
+
+
+def save_pointcloud(points: np.ndarray, colors: np.ndarray, file_path: str) -> None:
+    """Save point cloud to PLY file with validation"""
+    if points.shape[0] == 0:
+        raise ValueError("Cannot save empty point cloud")
+
+    if colors is not None and points.shape[0] != colors.shape[0]:
+        raise ValueError("Points and colors must have same length")
+
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(points)
+
+    if colors is not None:
+        pcd.colors = o3d.utility.Vector3dVector(colors)
+
+    o3d.io.write_point_cloud(file_path, pcd)
 
 
 def calculate_alpha_balanced(

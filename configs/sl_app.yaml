@@ -1,0 +1,22 @@
+input_path: "examples/scene.ply"   # Path to input point cloud
+output_path: "outputs/predictions/prediction.ply"  # Output file path
+model_path: "outputs/saved_model/best.pt"  # Trained model checkpoint
+
+# Model configuration
+model:
+  name: "PVCNN"          # Model architecture
+  num_classes: 20
+  extra_feature_channels: 3
+  dropout: 0.2
+
+# Processing parameters
+device: "cuda"           # Preferred device (cuda, cpu)
+target_size: 10000       # num points to sample
+use_rgb: true
+use_normals: false
+make_curvature: false
+make_density: false
+
+# Output options
+visualize: true          # Visualize results after inference
+save_predictions: false  # Save predictions as .npy file
