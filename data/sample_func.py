@@ -118,7 +118,7 @@ from tqdm import tqdm
 # from tqdm import tqdm
 
 
-def optimized_resample_points_fps(points, labels, target_size, k=20):
+def region_aware_sampling(points, labels, target_size, k=20):
 
     spatial_points = points[:, :3]
     n_points = len(points)

@@ -11,7 +11,7 @@ data:
   root: "downloaded/scans"
   train_size: 0.9
   target_size: 10000
-  sample_type: "sample"
+  sample_type: "region_aware"
   rgb_flag: True
   normal_flag: False
   density_flag: False

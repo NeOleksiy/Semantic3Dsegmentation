@@ -8,7 +8,7 @@ from sklearn.neighbors import KDTree, NearestNeighbors
 from torch.utils.data import Dataset
 
 from .augmentation import test_transform, train_transform
-from .sample_func import (optimized_resample_points_fps, resample_points,
+from .sample_func import (region_aware_sampling, resample_points,
                           resample_points_fps)
 
 
@@ -134,8 +134,8 @@ class ScannetDataset(Dataset):
         if self.sample_type == "sample":
             points, labels = resample_points(points, labels, self.target_size)
 
-        if self.sample_type == "optimized_fps":
-            points, labels = optimized_resample_points_fps(
+        if self.sample_type == "region_aware":
+            points, labels = region_aware_sampling(
                 points, labels, self.target_size
             )
 
@@ -330,8 +330,8 @@ class KITTI360Dataset(Dataset):
         if self.sample_type == "sample":
             points, labels = resample_points(points, labels, self.target_size)
 
-        if self.sample_type == "optimized_fps":
-            points, labels = optimized_resample_points_fps(
+        if self.sample_type == "region_aware":
+            points, labels = region_aware_sampling(
                 points, labels, self.target_size
             )
 

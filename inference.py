@@ -12,7 +12,7 @@ import torch
 from omegaconf import DictConfig, OmegaConf
 
 from data.dataset import ScannetDataset
-from data.sample_func import resample_points
+from data.sample_func import resample_points,resample_points_fps, region_aware_sampling
 from models import model_factory
 from utils.constants import COLOR_MAP, convert_to_original_labels
 from utils.logging import setup_logger
@@ -91,6 +91,19 @@ class PointCloudSegmenter:
         self.logger.info(
             f"End preprocess points and features, total shape: {features.shape}"
         )
+
+        if self.config["sample_type"] == "fps_sample":
+            points, labels = resample_points_fps(
+                points, labels, self.config["target_size"], self.allowed_labels
+            )
+        if self.config["sample_type"] == "sample":
+            points, labels = resample_points(points, labels, self.config["target_size"])
+
+        if self.config["sample_type"] == "region_aware":
+            points, labels = region_aware_sampling(
+                points, labels, self.config["target_size"]
+            )
+
         features, _ = resample_points(features, features, self.config["target_size"])
         return torch.tensor(features, dtype=torch.float32).to(self.device)
 
