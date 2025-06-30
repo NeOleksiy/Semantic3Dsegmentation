@@ -1,6 +1,6 @@
 # 3D Semantic Segmentation Toolkit
 
-![3D Segmentation Example](sem_3d_seg/static/seg_screan.png)  
+![3D Segmentation Example](static/seg_screan.png)  
 *Semantic segmentation example on ScanNet scene*
 
 ## Project Overview
@@ -15,11 +15,11 @@ make setup
 
 ```
 
-# Dataset Setup
-1.`
+# Dataset (Scannet from [kaggle](https://www.kaggle.com/datasets/dngminhli/scannet)) Setup
+1. `
 make data-download
 `
-2.Organize data with this structure:
+2. Organize data with this structure:
 ```
 datasets/
 └── scannet/
@@ -37,7 +37,7 @@ datasets/
     |   |── scene0000_01.txt
     |   |── scene0000_01.aggregation.json
     |   |──────
-...
+```
 
 
 
@@ -62,8 +62,13 @@ make docker-run-train # for train
 make docker-run-infer input_path=scene0022_01_vh_clean_2.ply output_path=/workspace/results/segmented.ply # for inference
 ```
 
-# Repository Structure
+# How integrate other datasets
+1. Write your dataset class in `data/dataset.py` in add `get_dataset` function
+2. Change `data:` key in config files
+3. For inference and visualizing change constants `COLOR_MAP` and `LEGEND_DATA` and function `convert_to_original_labels` in `utils/constants.py`
 
+# Repository Structure
+```
 3d-seg-repo/
 ├── configs/             # configuration
 ├── data/                # Data modules(dataset, augmentation)
@@ -78,16 +83,16 @@ make docker-run-infer input_path=scene0022_01_vh_clean_2.ply output_path=/worksp
 ├── s2app.py             # streamlit_app
 ├── requirements.txt     # Python dependencies
 ├── Makefile
-
+```
 ## Supported Models
 
-| Model            | Support Extra Features<br>(RGB, Normals) | mIoU<br>(ScanNet sample) | mIoU<br>(KITTI360 )     |
+| Model            | Support Extra Features<br>(RGB, Normals) | mIoU<br>(ScanNet sample) | mIoU<br>(KITTI360 raw)   |
 |------------------|------------------------------------------|--------------------------|--------------------------|
 | PointNet         | ❌                                       | 21.6%                    | -                        |
 | PointNet++       | ✅                                       | 39.4%                    | 18.6%                    |
 | VoxelNet         | ❌                                       | 19.2%                    | -                        |
-| VoxelNet+        | ✅                                       | 20.7%                    | 8.2%                     |
-| DGCNN            | ✅                                       | 30.1%                    | 21.6%                    |
+| VoxelNet+        | ✅                                       | 20.7%                    | -                        |
+| DGCNN            | ✅                                       | 30.1%                    | -                        |
 | PVCNN            | ✅                                       | 46.1%                    | 21.6%                    |
 
 ### PVCNN:
